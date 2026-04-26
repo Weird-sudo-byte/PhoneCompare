@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:pm="clr-namespace:PhoneCompare.PageModels"
+             xmlns:models="clr-namespace:PhoneCompare.Models"
+             x:Class="PhoneCompare.Pages.QuizPage"
+             x:DataType="pm:QuizPageModel"
+             Shell.NavBarIsVisible="False"
+             Shell.TabBarIsVisible="False"
+             BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- Header -->
+        <Border Grid.Row="0" StrokeShape="Rectangle" Stroke="Transparent"
+                BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+            <Border.Shadow>
+                <Shadow Brush="{StaticResource BlackBrush}" Offset="0,2" Radius="4" Opacity="0.08"/>
+            </Border.Shadow>
+            <Grid ColumnDefinitions="Auto,*,Auto" Padding="8,48,16,12">
+                <Button Grid.Column="0" Text="←" FontSize="20"
+                        Command="{Binding BackCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"
+                        WidthRequest="44" HeightRequest="44"/>
+                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                    <Label Text="🎯 Find My Phone" FontSize="18" FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                    <Label Text="{Binding StepLabel}" FontSize="12" TextColor="{StaticResource Gray400}"
+                           IsVisible="{Binding ShowQuiz}"/>
+                    <Label Text="Your recommendations" FontSize="12" TextColor="{StaticResource Gray400}"
+                           IsVisible="{Binding ShowResults}"/>
+                </VerticalStackLayout>
+                <Button Grid.Column="2" Text="Start Over" FontSize="12"
+                        Command="{Binding StartOverCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="{StaticResource Primary}"
+                        IsVisible="{Binding ShowResults}"
+                        Padding="8,4"/>
+            </Grid>
+        </Border>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="0">
+
+                <!-- ── QUIZ STEPS ── -->
+                <VerticalStackLayout IsVisible="{Binding ShowQuiz}" Padding="24,24,24,40" Spacing="24">
+
+                    <!-- Progress bar -->
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="6">
+                        <Border Grid.Column="0" HeightRequest="6" StrokeShape="RoundRectangle 3"
+                                Stroke="Transparent"
+                                BackgroundColor="{StaticResource Primary}"/>
+                        <Border Grid.Column="1" HeightRequest="6" StrokeShape="RoundRectangle 3"
+                                Stroke="Transparent"
+                                BackgroundColor="{Binding ProgressStep2, Converter={toolkit:DoubleToIntConverter}, ConverterParameter=1, FallbackValue={StaticResource Gray200}}">
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding IsStep2}" Value="True">
+                                    <Setter Property="BackgroundColor" Value="{StaticResource Primary}"/>
+                                </DataTrigger>
+                                <DataTrigger TargetType="Border" Binding="{Binding IsStep3}" Value="True">
+                                    <Setter Property="BackgroundColor" Value="{StaticResource Primary}"/>
+                                </DataTrigger>
+                            </Border.Triggers>
+                        </Border>
+                        <Border Grid.Column="2" HeightRequest="6" StrokeShape="RoundRectangle 3"
+                                Stroke="Transparent"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}">
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding IsStep3}" Value="True">
+                                    <Setter Property="BackgroundColor" Value="{StaticResource Primary}"/>
+                                </DataTrigger>
+                            </Border.Triggers>
+                        </Border>
+                    </Grid>
+
+                    <!-- ── STEP 1: Budget ── -->
+                    <VerticalStackLayout IsVisible="{Binding IsStep1}" Spacing="20">
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="💰 What's your budget?" FontSize="22" FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                            <Label Text="We'll narrow down phones in your price range."
+                                   FontSize="14" TextColor="{StaticResource Gray400}"/>
+                        </VerticalStackLayout>
+
+                        <!-- Budget options -->
+                        <Border StrokeShape="RoundRectangle 16" Padding="20,18" Stroke="{StaticResource Primary}"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SelectBudgetCommand}" CommandParameter="low"/>
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                <Label Grid.Column="0" Text="💵" FontSize="24" VerticalOptions="Center"/>
+                                <VerticalStackLayout Grid.Column="1" Margin="14,0,0,0" VerticalOptions="Center">
+                                    <Label Text="Under ₱15,000" FontSize="16" FontAttributes="Bold"
+                                           TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                                    <Label Text="Budget-friendly picks" FontSize="12" TextColor="{StaticResource Gray400}"/>
+                                </VerticalStackLayout>
+                                <Label Grid.Column="2" Text="›" FontSize="22" TextColor="{StaticResource Primary}" VerticalOptions="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <Border StrokeShape="RoundRectangle 16" Padding="20,18" Stroke="{StaticResource Primary}"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SelectBudgetCommand}" CommandParameter="mid"/>
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                <Label Grid.Column="0" Text="💳" FontSize="24" VerticalOptions="Center"/>
+                                <VerticalStackLayout Grid.Column="1" Margin="14,0,0,0" VerticalOptions="Center">
+                                    <Label Text="₱15,000 – ₱30,000" FontSize="16" FontAttributes="Bold"
+                                           TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                                    <Label Text="Mid-range sweet spot" FontSize="12" TextColor="{StaticResource Gray400}"/>
+                                </VerticalStackLayout>
+                                <Label Grid.Column="2" Text="›" FontSize="22" TextColor="{StaticResource Primary}" VerticalOptions="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <Border StrokeShape="RoundRectangle 16" Padding="20,18" Stroke="{StaticResource Primary}"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SelectBudgetCommand}" CommandParameter="high"/>
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                <Label Grid.Column="0" Text="💎" FontSize="24" VerticalOptions="Center"/>
+                                <VerticalStackLayout Grid.Column="1" Margin="14,0,0,0" VerticalOptions="Center">
+                                    <Label Text="Above ₱30,000" FontSize="16" FontAttributes="Bold"
+                                           TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                                    <Label Text="Premium flagships" FontSize="12" TextColor="{StaticResource Gray400}"/>
+                                </VerticalStackLayout>
+                                <Label Grid.Column="2" Text="›" FontSize="22" TextColor="{StaticResource Primary}" VerticalOptions="Center"/>
+                            </Grid>
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- ── STEP 2: Use Case ── -->
+                    <VerticalStackLayout IsVisible="{Binding IsStep2}" Spacing="20">
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="📱 What matters most?" FontSize="22" FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                            <Label Text="We'll prioritize phones that excel in this area."
+                                   FontSize="14" TextColor="{StaticResource Gray400}"/>
+                        </VerticalStackLayout>
+
+                        <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="12" RowSpacing="12">
+                            <!-- Camera -->
+                            <Border Grid.Row="0" Grid.Column="0" StrokeShape="RoundRectangle 16" Padding="16"
+                                    Stroke="{StaticResource Primary}"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectUseCaseCommand}" CommandParameter="camera"/>
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                                    <Label Text="📷" FontSize="36" HorizontalOptions="Center"/>
+                                    <Label Text="Camera" FontSize="15" FontAttributes="Bold" HorizontalOptions="Center"
+                                           TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                                    <Label Text="Best photos &amp; video" FontSize="11" TextColor="{StaticResource Gray400}"
+                                           HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
+                                </VerticalStackLayout>
+                            </Border>
+                            <!-- Gaming -->
+                            <Border Grid.Row="0" Grid.Column="1" StrokeShape="RoundRectangle 16" Padding="16"
+                                    Stroke="{StaticResource Primary}"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectUseCaseCommand}" CommandParameter="gaming"/>
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                                    <Label Text="🎮" FontSize="36" HorizontalOptions="Center"/>
+                                    <Label Text="Gaming" FontSize="15" FontAttributes="Bold" HorizontalOptions="Center"
+                                           TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                                    <Label Text="Speed &amp; performance" FontSize="11" TextColor="{StaticResource Gray400}"
+                                           HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
+                                </VerticalStackLayout>
+                            </Border>
+                            <!-- Battery -->
+                            <Border Grid.Row="1" Grid.Column="0" StrokeShape="RoundRectangle 16" Padding="16"
+                                    Stroke="{StaticResource Primary}"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectUseCaseCommand}" CommandParameter="battery"/>
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                                    <Label Text="🔋" FontSize="36" HorizontalOptions="Center"/>
+                                    <Label Text="Battery" FontSize="15" FontAttributes="Bold" HorizontalOptions="Center"
+                                           TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                                    <Label Text="All-day endurance" FontSize="11" TextColor="{StaticResource Gray400}"
+                                           HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
+                                </VerticalStackLayout>
+                            </Border>
+                            <!-- Value -->
+                            <Border Grid.Row="1" Grid.Column="1" StrokeShape="RoundRectangle 16" Padding="16"
+                                    Stroke="{StaticResource Primary}"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectUseCaseCommand}" CommandParameter="value"/>
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                                    <Label Text="💰" FontSize="36" HorizontalOptions="Center"/>
+                                    <Label Text="Value" FontSize="15" FontAttributes="Bold" HorizontalOptions="Center"
+                                           TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                                    <Label Text="Best bang for buck" FontSize="11" TextColor="{StaticResource Gray400}"
+                                           HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
+                    </VerticalStackLayout>
+
+                    <!-- ── STEP 3: Brand ── -->
+                    <VerticalStackLayout IsVisible="{Binding IsStep3}" Spacing="20">
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="🏷️ Brand preference?" FontSize="22" FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                            <Label Text="Narrow to a specific brand or see all options."
+                                   FontSize="14" TextColor="{StaticResource Gray400}"/>
+                        </VerticalStackLayout>
+
+                        <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="10">
+                            <!-- Any -->
+                            <Border Grid.Row="0" Grid.Column="0" StrokeShape="RoundRectangle 14" Padding="12,14"
+                                    Stroke="{StaticResource Primary}"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectBrandCommand}" CommandParameter="any"/>
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                                    <Label Text="🌐" FontSize="28" HorizontalOptions="Center"/>
+                                    <Label Text="Any" FontSize="13" FontAttributes="Bold" HorizontalOptions="Center"
+                                           TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                                </VerticalStackLayout>
+                            </Border>
+                            <!-- Apple -->
+                            <Border Grid.Row="0" Grid.Column="1" StrokeShape="RoundRectangle 14" Padding="12,14"
+                                    Stroke="{StaticResource Primary}"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectBrandCommand}" CommandParameter="Apple"/>
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                                    <Label Text="🍎" FontSize="28" HorizontalOptions="Center"/>
+                                    <Label Text="Apple" FontSize="13" FontAttributes="Bold" HorizontalOptions="Center"
+                                           TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                                </VerticalStackLayout>
+                            </Border>
+                            <!-- Samsung -->
+                            <Border Grid.Row="0" Grid.Column="2" StrokeShape="RoundRectangle 14" Padding="12,14"
+                                    Stroke="{StaticResource Primary}"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectBrandCommand}" CommandParameter="Samsung"/>
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                                    <Label Text="📺" FontSize="28" HorizontalOptions="Center"/>
+                                    <Label Text="Samsung" FontSize="13" FontAttributes="Bold" HorizontalOptions="Center"
+                                           TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                                </VerticalStackLayout>
+                            </Border>
+                            <!-- Xiaomi -->
+                            <Border Grid.Row="1" Grid.Column="0" StrokeShape="RoundRectangle 14" Padding="12,14"
+                                    Stroke="{StaticResource Primary}"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectBrandCommand}" CommandParameter="Xiaomi"/>
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                                    <Label Text="⚡" FontSize="28" HorizontalOptions="Center"/>
+                                    <Label Text="Xiaomi" FontSize="13" FontAttributes="Bold" HorizontalOptions="Center"
+                                           TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                                </VerticalStackLayout>
+                            </Border>
+                            <!-- Oppo -->
+                            <Border Grid.Row="1" Grid.Column="1" StrokeShape="RoundRectangle 14" Padding="12,14"
+                                    Stroke="{StaticResource Primary}"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectBrandCommand}" CommandParameter="Oppo"/>
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                                    <Label Text="🔵" FontSize="28" HorizontalOptions="Center"/>
+                                    <Label Text="Oppo" FontSize="13" FontAttributes="Bold" HorizontalOptions="Center"
+                                           TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                                </VerticalStackLayout>
+                            </Border>
+                            <!-- Other -->
+                            <Border Grid.Row="1" Grid.Column="2" StrokeShape="RoundRectangle 14" Padding="12,14"
+                                    Stroke="{StaticResource Primary}"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectBrandCommand}" CommandParameter="other"/>
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                                    <Label Text="🔍" FontSize="28" HorizontalOptions="Center"/>
+                                    <Label Text="Other" FontSize="13" FontAttributes="Bold" HorizontalOptions="Center"
+                                           TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
+                    </VerticalStackLayout>
+
+                </VerticalStackLayout>
+
+                <!-- ── RESULTS ── -->
+                <VerticalStackLayout IsVisible="{Binding ShowResults}" Padding="16,16,16,40" Spacing="12">
+
+                    <!-- No results -->
+                    <VerticalStackLayout IsVisible="{Binding HasResults, Converter={toolkit:InvertedBoolConverter}}"
+                                        VerticalOptions="Center" HorizontalOptions="Center"
+                                        Padding="40" Spacing="16">
+                        <Label Text="😕" FontSize="56" HorizontalOptions="Center"/>
+                        <Label Text="No phones found" FontSize="18" FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"
+                               HorizontalOptions="Center"/>
+                        <Label Text="Try different answers" FontSize="13"
+                               TextColor="{StaticResource Gray400}" HorizontalOptions="Center"/>
+                        <Button Text="Try Again" Command="{Binding StartOverCommand}"
+                                BackgroundColor="{StaticResource Primary}" TextColor="White"
+                                CornerRadius="12" HeightRequest="48" Margin="0,8,0,0"/>
+                    </VerticalStackLayout>
+
+                    <!-- Results list -->
+                    <VerticalStackLayout IsVisible="{Binding HasResults}" Spacing="10"
+                                        BindableLayout.ItemsSource="{Binding Results}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="pm:QuizResult">
+                                <Border StrokeShape="RoundRectangle 16" Padding="0"
+                                        BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}"
+                                        Stroke="{AppThemeBinding Light={StaticResource LightBorder}, Dark={StaticResource DarkBorder}}">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type pm:QuizPageModel}}, Path=ViewPhoneCommand}"
+                                            CommandParameter="{Binding .}"/>
+                                    </Border.GestureRecognizers>
+                                    <Grid ColumnDefinitions="90,*,Auto" ColumnSpacing="0">
+                                        <!-- Phone image -->
+                                        <Border Grid.Column="0" StrokeShape="RoundRectangle 16,0,0,16"
+                                                BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkBackground}}"
+                                                Stroke="Transparent" Padding="8">
+                                            <Image Source="{Binding Phone.ImageUrl}" Aspect="AspectFit"
+                                                   HeightRequest="70" WidthRequest="70"/>
+                                        </Border>
+                                        <!-- Info -->
+                                        <VerticalStackLayout Grid.Column="1" Padding="14,12" Spacing="4" VerticalOptions="Center">
+                                            <!-- Best Match badge -->
+                                            <Border StrokeShape="RoundRectangle 6" Padding="8,3"
+                                                    BackgroundColor="{Binding BadgeColor}"
+                                                    Stroke="Transparent" HorizontalOptions="Start">
+                                                <Label Text="{Binding RankLabel}" FontSize="11" FontAttributes="Bold"
+                                                       TextColor="White"/>
+                                            </Border>
+                                            <Label Text="{Binding Phone.Name}" FontSize="14" FontAttributes="Bold"
+                                                   TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"
+                                                   MaxLines="2" LineBreakMode="TailTruncation"/>
+                                            <Label Text="{Binding Phone.PriceDisplay}" FontSize="13"
+                                                   TextColor="{StaticResource Primary}" FontAttributes="Bold"/>
+                                        </VerticalStackLayout>
+                                        <!-- Arrow -->
+                                        <Label Grid.Column="2" Text="›" FontSize="24"
+                                               TextColor="{StaticResource Gray400}"
+                                               VerticalOptions="Center" Margin="0,0,16,0"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+    </Grid>
+
+</ContentPage>

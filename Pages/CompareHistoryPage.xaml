@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:pm="clr-namespace:PhoneCompare.PageModels"
+             xmlns:models="clr-namespace:PhoneCompare.Models"
+             x:Class="PhoneCompare.Pages.CompareHistoryPage"
+             x:DataType="pm:CompareHistoryPageModel"
+             x:Name="ThisPage"
+             Title="Compare History"
+             Shell.NavBarIsVisible="False">
+
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior
+            BindingContext="{Binding Path=BindingContext, Source={x:Reference ThisPage}, x:DataType=ContentPage}"
+            EventName="Appearing" Command="{Binding AppearingCommand}"/>
+    </ContentPage.Behaviors>
+
+    <Grid RowDefinitions="Auto,*" BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+        
+        <!-- Header -->
+        <Border Grid.Row="0" StrokeShape="Rectangle" Stroke="Transparent"
+                BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+            <Border.Shadow>
+                <Shadow Brush="{StaticResource BlackBrush}" Offset="0,2" Radius="4" Opacity="0.08"/>
+            </Border.Shadow>
+            <Grid ColumnDefinitions="Auto,*" Padding="8,16,16,12">
+                <Button Grid.Column="0" Text="←" FontSize="20" 
+                        Command="{Binding GoBackCommand}"
+                        BackgroundColor="Transparent" 
+                        TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"
+                        WidthRequest="44" HeightRequest="44"/>
+                <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                    <Label Text="Compare History" FontSize="20" FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                    <Label Text="Your past phone comparisons" FontSize="12" TextColor="{StaticResource Gray400}"/>
+                </VerticalStackLayout>
+            </Grid>
+        </Border>
+
+        <RefreshView Grid.Row="1" Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}"
+                     RefreshColor="{StaticResource Primary}">
+            <CollectionView ItemsSource="{Binding Items}" SelectionMode="None"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkBackground}}">
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center"
+                                         Padding="40" Spacing="16">
+                        <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+                                           Color="{StaticResource Primary}" HorizontalOptions="Center"
+                                           WidthRequest="40" HeightRequest="40"/>
+                        <Label Text="⚖️" FontSize="56" HorizontalOptions="Center"
+                               TextColor="{StaticResource Gray300}"
+                               IsVisible="{Binding IsBusy, Converter={toolkit:InvertedBoolConverter}}"/>
+                        <Label Text="No comparisons yet" FontSize="18" FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"
+                               HorizontalOptions="Center"
+                               IsVisible="{Binding IsBusy, Converter={toolkit:InvertedBoolConverter}}"/>
+                        <Label Text="Compare phones to see them here" FontSize="13"
+                               TextColor="{StaticResource Gray400}" HorizontalOptions="Center"
+                               IsVisible="{Binding IsBusy, Converter={toolkit:InvertedBoolConverter}}"/>
+                        <Button Text="Browse Phones →" Command="{Binding BrowsePhonesCommand}"
+                                BackgroundColor="{StaticResource Primary}" TextColor="White"
+                                CornerRadius="12" HeightRequest="48" Margin="0,8,0,0"
+                                IsVisible="{Binding IsBusy, Converter={toolkit:InvertedBoolConverter}}"/>
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:CompareHistory">
+                        <Border StrokeShape="RoundRectangle 12" Margin="12,6" Padding="12"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}"
+                                Stroke="{AppThemeBinding Light={StaticResource LightBorder}, Dark={StaticResource DarkBorder}}">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type pm:CompareHistoryPageModel}}, Path=ViewComparisonCommand}"
+                                    CommandParameter="{Binding .}"/>
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="60,Auto,60,*,Auto" ColumnSpacing="8">
+                                <!-- Phone 1 Image -->
+                                <Image Grid.Column="0" Source="{Binding Phone1ImageUrl}" 
+                                       Aspect="AspectFit" HeightRequest="60" WidthRequest="60"/>
+                                
+                                <!-- VS Badge -->
+                                <Border Grid.Column="1" WidthRequest="28" HeightRequest="28"
+                                        StrokeShape="RoundRectangle 14" Stroke="Transparent"
+                                        BackgroundColor="{StaticResource Primary}"
+                                        VerticalOptions="Center">
+                                    <Label Text="VS" FontSize="10" FontAttributes="Bold"
+                                           TextColor="White" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                </Border>
+                                
+                                <!-- Phone 2 Image -->
+                                <Image Grid.Column="2" Source="{Binding Phone2ImageUrl}" 
+                                       Aspect="AspectFit" HeightRequest="60" WidthRequest="60"/>
+                                
+                                <!-- Names & Date -->
+                                <VerticalStackLayout Grid.Column="3" VerticalOptions="Center" Spacing="4">
+                                    <Label FontSize="13" FontAttributes="Bold" MaxLines="1" LineBreakMode="TailTruncation"
+                                           TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}">
+                                        <Label.Text>
+                                            <MultiBinding StringFormat="{}{0} vs {1}">
+                                                <Binding Path="Phone1Name"/>
+                                                <Binding Path="Phone2Name"/>
+                                            </MultiBinding>
+                                        </Label.Text>
+                                    </Label>
+                                    <Label Text="{Binding ComparedAt, StringFormat='{0:MMM dd, yyyy}'}" 
+                                           FontSize="11" TextColor="{StaticResource Gray400}"/>
+                                </VerticalStackLayout>
+                                
+                                <!-- Delete Button -->
+                                <Button Grid.Column="4" Text="✕" WidthRequest="32" HeightRequest="32"
+                                        VerticalOptions="Center"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type pm:CompareHistoryPageModel}}, Path=DeleteItemCommand}"
+                                        CommandParameter="{Binding .}"
+                                        BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkBackground}}"
+                                        TextColor="{StaticResource Gray400}"
+                                        FontSize="12" CornerRadius="16" Padding="0"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+
+</ContentPage>

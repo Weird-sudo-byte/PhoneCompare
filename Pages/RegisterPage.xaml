@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:pm="clr-namespace:PhoneCompare.PageModels"
+             x:Class="PhoneCompare.Pages.RegisterPage"
+             x:DataType="pm:RegisterPageModel"
+             Shell.NavBarIsVisible="False"
+             Title="Register">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="32" Spacing="20" VerticalOptions="Center">
+
+            <!-- ══════════════════════════════════════════════════════════════ -->
+            <!-- REGISTRATION FORM (shown when ShowOtpInput = false) -->
+            <!-- ══════════════════════════════════════════════════════════════ -->
+            <VerticalStackLayout Spacing="20" IsVisible="{Binding ShowOtpInput, Converter={toolkit:InvertedBoolConverter}}">
+
+                <!-- Brand -->
+                <VerticalStackLayout HorizontalOptions="Center" Spacing="8" Margin="0,0,0,10">
+                    <Image Source="logo.svg" WidthRequest="64" HeightRequest="64"
+                           HorizontalOptions="Center"/>
+                    <Label Text="Create Account" FontSize="26" FontAttributes="Bold"
+                           HorizontalOptions="Center"
+                           TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                    <Label Text="Start comparing phones today ⚡" FontSize="13"
+                           HorizontalOptions="Center" TextColor="{StaticResource Gray400}"/>
+                </VerticalStackLayout>
+
+                <!-- Card -->
+                <Border StrokeShape="RoundRectangle 20" Stroke="Transparent" Padding="0"
+                        BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource DarkSecondaryBackground}}">
+                    <Border.Shadow>
+                        <Shadow Brush="{StaticResource BlackBrush}" Offset="0,4" Radius="20" Opacity="0.1"/>
+                    </Border.Shadow>
+                    <VerticalStackLayout Padding="24" Spacing="14">
+
+                        <!-- Name -->
+                        <Border StrokeShape="RoundRectangle 12" Stroke="Transparent" Padding="14,4"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkBackground}}"
+                                HeightRequest="52">
+                            <Entry Placeholder="Display Name" Text="{Binding DisplayName}"
+                                   BackgroundColor="Transparent"
+                                   PlaceholderColor="{StaticResource Gray400}"
+                                   TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"
+                                   VerticalOptions="Center" FontSize="14"/>
+                        </Border>
+
+                        <!-- Email -->
+                        <Border StrokeShape="RoundRectangle 12" Stroke="Transparent" Padding="14,4"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkBackground}}"
+                                HeightRequest="52">
+                            <Entry Placeholder="Email" Text="{Binding Email}"
+                                   Keyboard="Email" BackgroundColor="Transparent"
+                                   PlaceholderColor="{StaticResource Gray400}"
+                                   TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"
+                                   VerticalOptions="Center" FontSize="14"/>
+                        </Border>
+
+                        <!-- Password -->
+                        <Border StrokeShape="RoundRectangle 12" Stroke="Transparent" Padding="14,4"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkBackground}}"
+                                HeightRequest="52">
+                            <Entry Placeholder="Password" Text="{Binding Password}"
+                                   IsPassword="True" BackgroundColor="Transparent"
+                                   PlaceholderColor="{StaticResource Gray400}"
+                                   TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"
+                                   VerticalOptions="Center" FontSize="14"/>
+                        </Border>
+
+                        <!-- Confirm Password -->
+                        <Border StrokeShape="RoundRectangle 12" Stroke="Transparent" Padding="14,4"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkBackground}}"
+                                HeightRequest="52">
+                            <Entry Placeholder="Confirm Password" Text="{Binding ConfirmPassword}"
+                                   IsPassword="True" BackgroundColor="Transparent"
+                                   PlaceholderColor="{StaticResource Gray400}"
+                                   TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"
+                                   VerticalOptions="Center" FontSize="14"/>
+                        </Border>
+
+                        <!-- Error -->
+                        <Label Text="{Binding ErrorMessage}" TextColor="#E53935" FontSize="12"
+                               IsVisible="{Binding ErrorMessage, Converter={toolkit:IsStringNotNullOrEmptyConverter}}"/>
+
+                        <!-- Register Button -->
+                        <Button Text="Create Account" Command="{Binding RegisterCommand}"
+                                BackgroundColor="{StaticResource Primary}" TextColor="White"
+                                FontAttributes="Bold" CornerRadius="14" HeightRequest="52"
+                                FontSize="15" Margin="0,6,0,0"
+                                IsEnabled="{Binding IsBusy, Converter={toolkit:InvertedBoolConverter}}"/>
+
+                        <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+                                           Color="{StaticResource Primary}" HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Back to login -->
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="5">
+                    <Label Text="Already have an account?" TextColor="{StaticResource Gray400}" FontSize="13"/>
+                    <Label Text="Sign In" FontAttributes="Bold" FontSize="13"
+                           TextColor="{StaticResource Primary}">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoBackCommand}"/>
+                        </Label.GestureRecognizers>
+                    </Label>
+                </HorizontalStackLayout>
+
+            </VerticalStackLayout>
+
+            <!-- ══════════════════════════════════════════════════════════════ -->
+            <!-- OTP VERIFICATION (shown when ShowOtpInput = true) -->
+            <!-- ══════════════════════════════════════════════════════════════ -->
+            <VerticalStackLayout Spacing="20" IsVisible="{Binding ShowOtpInput}">
+
+                <!-- Header -->
+                <VerticalStackLayout HorizontalOptions="Center" Spacing="12" Margin="0,20,0,0">
+                    <Border WidthRequest="80" HeightRequest="80" StrokeShape="RoundRectangle 40"
+                            BackgroundColor="{StaticResource Primary}" Stroke="Transparent"
+                            HorizontalOptions="Center">
+                        <Label Text="✉️" FontSize="36" HorizontalOptions="Center" VerticalOptions="Center"/>
+                    </Border>
+                    <Label Text="Check your email" FontSize="24" FontAttributes="Bold"
+                           HorizontalOptions="Center"
+                           TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                    <Label Text="{Binding OtpStatusMessage}" FontSize="13"
+                           HorizontalOptions="Center" HorizontalTextAlignment="Center"
+                           TextColor="{StaticResource Gray400}"/>
+                </VerticalStackLayout>
+
+                <!-- OTP Input Card -->
+                <Border StrokeShape="RoundRectangle 20" Stroke="Transparent" Padding="0"
+                        BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource DarkSecondaryBackground}}">
+                    <Border.Shadow>
+                        <Shadow Brush="{StaticResource BlackBrush}" Offset="0,4" Radius="20" Opacity="0.1"/>
+                    </Border.Shadow>
+                    <VerticalStackLayout Padding="24" Spacing="16">
+
+                        <!-- OTP Entry -->
+                        <Border StrokeShape="RoundRectangle 12" Stroke="{StaticResource Primary}" 
+                                StrokeThickness="2" Padding="14,8"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkBackground}}"
+                                HeightRequest="70">
+                            <Entry Text="{Binding OtpCode}" Placeholder="000000"
+                                   Keyboard="Numeric" MaxLength="6"
+                                   FontSize="28" FontAttributes="Bold"
+                                   HorizontalTextAlignment="Center"
+                                   BackgroundColor="Transparent"
+                                   PlaceholderColor="{StaticResource Gray300}"
+                                   TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"
+                                   VerticalOptions="Center"/>
+                        </Border>
+
+                        <Label Text="Enter the 6-digit code from your email" FontSize="12"
+                               HorizontalOptions="Center" TextColor="{StaticResource Gray400}"/>
+
+                        <!-- Error -->
+                        <Label Text="{Binding ErrorMessage}" TextColor="#E53935" FontSize="12"
+                               HorizontalTextAlignment="Center"
+                               IsVisible="{Binding ErrorMessage, Converter={toolkit:IsStringNotNullOrEmptyConverter}}"/>
+
+                        <!-- Verify Button -->
+                        <Button Text="Verify Code" Command="{Binding VerifyOtpCommand}"
+                                BackgroundColor="{StaticResource Primary}" TextColor="White"
+                                FontAttributes="Bold" CornerRadius="14" HeightRequest="52"
+                                FontSize="15"
+                                IsEnabled="{Binding IsBusy, Converter={toolkit:InvertedBoolConverter}}"/>
+
+                        <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+                                           Color="{StaticResource Primary}" HorizontalOptions="Center"/>
+
+                        <!-- Resend -->
+                        <HorizontalStackLayout HorizontalOptions="Center" Spacing="5">
+                            <Label Text="Didn't receive the code?" TextColor="{StaticResource Gray400}" FontSize="13"/>
+                            <Label Text="Resend" FontAttributes="Bold" FontSize="13"
+                                   TextColor="{StaticResource Primary}">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ResendOtpCommand}"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </HorizontalStackLayout>
+
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Back to form -->
+                <Label Text="← Back to registration" FontSize="13"
+                       HorizontalOptions="Center" TextColor="{StaticResource Primary}">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding BackToFormCommand}"/>
+                    </Label.GestureRecognizers>
+                </Label>
+
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

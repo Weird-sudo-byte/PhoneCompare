@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:pm="clr-namespace:PhoneCompare.PageModels"
+             x:Class="PhoneCompare.Pages.SettingsPage"
+             x:DataType="pm:SettingsPageModel"
+             Title="Settings"
+             Shell.NavBarIsVisible="False">
+
+    <Grid RowDefinitions="Auto,*" BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+        
+        <!-- Header -->
+        <Border Grid.Row="0" StrokeShape="Rectangle" Stroke="Transparent"
+                BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+            <Border.Shadow>
+                <Shadow Brush="{StaticResource BlackBrush}" Offset="0,2" Radius="4" Opacity="0.08"/>
+            </Border.Shadow>
+            <Grid ColumnDefinitions="Auto,*" Padding="8,16,16,12">
+                <Button Grid.Column="0" Text="←" FontSize="20" 
+                        Command="{Binding GoBackCommand}"
+                        BackgroundColor="Transparent" 
+                        TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"
+                        WidthRequest="44" HeightRequest="44"/>
+                <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                    <Label Text="Settings" FontSize="20" FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                    <Label Text="App preferences" FontSize="12" TextColor="{StaticResource Gray400}"/>
+                </VerticalStackLayout>
+            </Grid>
+        </Border>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="16">
+
+                <!-- Account Section -->
+                <Label Text="ACCOUNT" FontSize="12" FontAttributes="Bold"
+                       TextColor="{StaticResource Gray400}" Margin="4,8,0,0"/>
+                <Border StrokeShape="RoundRectangle 12" Stroke="Transparent" Padding="0"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+                    <VerticalStackLayout>
+                        <!-- Signed in info -->
+                        <Grid Padding="16" ColumnDefinitions="Auto,*,Auto"
+                              IsVisible="{Binding IsLoggedIn}">
+                            <Border Grid.Column="0" WidthRequest="40" HeightRequest="40"
+                                    StrokeShape="RoundRectangle 20" Stroke="Transparent"
+                                    BackgroundColor="{StaticResource Primary}">
+                                <Label Text="👤" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center"/>
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" Margin="12,0,0,0" VerticalOptions="Center" Spacing="2">
+                                <Label Text="Signed in as" FontSize="11" TextColor="{StaticResource Gray400}"/>
+                                <Label Text="{Binding UserEmail}" FontSize="13" FontAttributes="Bold"
+                                       TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"
+                                       LineBreakMode="TailTruncation"/>
+                            </VerticalStackLayout>
+                            <Button Grid.Column="2" Text="Sign Out" Command="{Binding LogoutCommand}"
+                                    BackgroundColor="#FEE2E2" TextColor="#EF4444"
+                                    FontSize="12" FontAttributes="Bold" CornerRadius="8"
+                                    Padding="12,6" HeightRequest="36"/>
+                        </Grid>
+                        <!-- Not signed in -->
+                        <Grid Padding="16" ColumnDefinitions="Auto,*,Auto"
+                              IsVisible="{Binding IsLoggedIn, Converter={toolkit:InvertedBoolConverter}}">
+                            <Label Grid.Column="0" Text="🔒" FontSize="20" VerticalOptions="Center"/>
+                            <VerticalStackLayout Grid.Column="1" Margin="12,0,0,0" VerticalOptions="Center">
+                                <Label Text="Not signed in" FontSize="15"
+                                       TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                                <Label Text="Sign in to sync your data" FontSize="11" TextColor="{StaticResource Gray400}"/>
+                            </VerticalStackLayout>
+                            <Label Grid.Column="2" Text="›" FontSize="20" TextColor="{StaticResource Gray400}"/>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Appearance Section -->
+                <Label Text="APPEARANCE" FontSize="12" FontAttributes="Bold" 
+                       TextColor="{StaticResource Gray400}" Margin="4,8,0,0"/>
+                <Border StrokeShape="RoundRectangle 12" Stroke="Transparent" Padding="0"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+                    <VerticalStackLayout>
+                        <Grid Padding="16" ColumnDefinitions="Auto,*,Auto">
+                            <Label Grid.Column="0" Text="🌙" FontSize="20" VerticalOptions="Center"/>
+                            <VerticalStackLayout Grid.Column="1" Margin="12,0,0,0" VerticalOptions="Center">
+                                <Label Text="Dark Mode" FontSize="15"
+                                       TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                                <Label Text="Switch between light and dark theme" FontSize="11"
+                                       TextColor="{StaticResource Gray400}"/>
+                            </VerticalStackLayout>
+                            <Switch Grid.Column="2" IsToggled="{Binding IsDarkMode}" 
+                                    OnColor="{StaticResource Primary}" VerticalOptions="Center"/>
+                        </Grid>
+                        <BoxView HeightRequest="1"
+                                 Color="{AppThemeBinding Light={StaticResource LightBorder}, Dark={StaticResource DarkBorder}}"/>
+                        <Grid Padding="16" ColumnDefinitions="Auto,*,Auto">
+                            <Label Grid.Column="0" Text="🔃" FontSize="20" VerticalOptions="Center"/>
+                            <VerticalStackLayout Grid.Column="1" Margin="12,0,0,0" VerticalOptions="Center">
+                                <Label Text="Default Sort Order" FontSize="15"
+                                       TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                                <Label Text="How phones are listed by default" FontSize="11"
+                                       TextColor="{StaticResource Gray400}"/>
+                            </VerticalStackLayout>
+                            <Picker Grid.Column="2" ItemsSource="{Binding SortOrders}"
+                                    SelectedItem="{Binding SelectedSortOrder}"
+                                    FontSize="13" TextColor="{StaticResource Primary}"
+                                    WidthRequest="120" HorizontalOptions="End"/>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Notifications Section -->
+                <Label Text="NOTIFICATIONS" FontSize="12" FontAttributes="Bold" 
+                       TextColor="{StaticResource Gray400}" Margin="4,8,0,0"/>
+                <Border StrokeShape="RoundRectangle 12" Stroke="Transparent" Padding="0"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+                    <Grid Padding="16" ColumnDefinitions="Auto,*,Auto">
+                        <Label Grid.Column="0" Text="🔔" FontSize="20" VerticalOptions="Center"/>
+                        <VerticalStackLayout Grid.Column="1" Margin="12,0,0,0" VerticalOptions="Center">
+                            <Label Text="Push Notifications" FontSize="15"
+                                   TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                            <Label Text="Get notified about new phones" FontSize="11"
+                                   TextColor="{StaticResource Gray400}"/>
+                        </VerticalStackLayout>
+                        <Switch Grid.Column="2" IsToggled="{Binding NotificationsEnabled}" 
+                                OnColor="{StaticResource Primary}" VerticalOptions="Center"/>
+                    </Grid>
+                </Border>
+
+                <!-- Compare Section -->
+                <Label Text="COMPARE" FontSize="12" FontAttributes="Bold"
+                       TextColor="{StaticResource Gray400}" Margin="4,8,0,0"/>
+                <Border StrokeShape="RoundRectangle 12" Stroke="Transparent" Padding="0"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+                    <VerticalStackLayout>
+                        <Grid Padding="16" ColumnDefinitions="Auto,*,Auto">
+                            <Label Grid.Column="0" Text="⚡" FontSize="20" VerticalOptions="Center"/>
+                            <VerticalStackLayout Grid.Column="1" Margin="12,0,0,0" VerticalOptions="Center">
+                                <Label Text="Auto-clear after Compare" FontSize="15"
+                                       TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                                <Label Text="Reset selection after viewing results" FontSize="11"
+                                       TextColor="{StaticResource Gray400}"/>
+                            </VerticalStackLayout>
+                            <Switch Grid.Column="2" IsToggled="{Binding AutoClearAfterCompare}"
+                                    OnColor="{StaticResource Primary}" VerticalOptions="Center"/>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Data Section -->
+                <Label Text="DATA" FontSize="12" FontAttributes="Bold" 
+                       TextColor="{StaticResource Gray400}" Margin="4,8,0,0"/>
+                <Border StrokeShape="RoundRectangle 12" Stroke="Transparent" Padding="0"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+                    <VerticalStackLayout>
+                        <!-- Clear Cache -->
+                        <Grid Padding="16" ColumnDefinitions="Auto,*,Auto" MinimumHeightRequest="56">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ClearCacheCommand}"/>
+                            </Grid.GestureRecognizers>
+                            <Label Grid.Column="0" Text="🗑️" FontSize="20" VerticalOptions="Center"/>
+                            <VerticalStackLayout Grid.Column="1" Margin="12,0,0,0" VerticalOptions="Center">
+                                <Label Text="Clear Cache" FontSize="15"
+                                       TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                                <Label Text="Free up storage space" FontSize="11"
+                                       TextColor="{StaticResource Gray400}"/>
+                            </VerticalStackLayout>
+                            <Label Grid.Column="2" Text="›" FontSize="20" TextColor="{StaticResource Gray400}"/>
+                            <BoxView Grid.ColumnSpan="3" HeightRequest="1" VerticalOptions="End"
+                                     Color="{AppThemeBinding Light={StaticResource LightBorder}, Dark={StaticResource DarkBorder}}"/>
+                        </Grid>
+                        <!-- Clear Compare History -->
+                        <Grid Padding="16" ColumnDefinitions="Auto,*,Auto" MinimumHeightRequest="56">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ClearCompareHistoryCommand}"/>
+                            </Grid.GestureRecognizers>
+                            <Label Grid.Column="0" Text="⚖️" FontSize="20" VerticalOptions="Center"/>
+                            <VerticalStackLayout Grid.Column="1" Margin="12,0,0,0" VerticalOptions="Center">
+                                <Label Text="Clear Compare History" FontSize="15"
+                                       TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                                <Label Text="Delete all comparison history" FontSize="11"
+                                       TextColor="{StaticResource Gray400}"/>
+                            </VerticalStackLayout>
+                            <Label Grid.Column="2" Text="›" FontSize="20" TextColor="{StaticResource Gray400}"/>
+                            <BoxView Grid.ColumnSpan="3" HeightRequest="1" VerticalOptions="End"
+                                     Color="{AppThemeBinding Light={StaticResource LightBorder}, Dark={StaticResource DarkBorder}}"/>
+                        </Grid>
+                        <!-- Clear Favorites -->
+                        <Grid Padding="16" ColumnDefinitions="Auto,*,Auto" MinimumHeightRequest="56">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ClearFavoritesCommand}"/>
+                            </Grid.GestureRecognizers>
+                            <Label Grid.Column="0" Text="🗑️" FontSize="20" VerticalOptions="Center" TextColor="#EF4444"/>
+                            <VerticalStackLayout Grid.Column="1" Margin="12,0,0,0" VerticalOptions="Center">
+                                <Label Text="Clear Favorites" FontSize="15" TextColor="#EF4444"/>
+                                <Label Text="Remove all saved phones" FontSize="11"
+                                       TextColor="{StaticResource Gray400}"/>
+                            </VerticalStackLayout>
+                            <Label Grid.Column="2" Text="›" FontSize="20" TextColor="{StaticResource Gray400}"/>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- About Section -->
+                <Label Text="ABOUT" FontSize="12" FontAttributes="Bold" 
+                       TextColor="{StaticResource Gray400}" Margin="4,8,0,0"/>
+                <Border StrokeShape="RoundRectangle 12" Stroke="Transparent" Padding="0"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+                    <VerticalStackLayout>
+                        <Grid Padding="16" ColumnDefinitions="*,Auto">
+                            <Label Grid.Column="0" Text="Version" FontSize="15"
+                                   TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                            <Label Grid.Column="1" Text="{Binding AppVersion}" FontSize="15"
+                                   TextColor="{StaticResource Gray400}"/>
+                            <BoxView Grid.ColumnSpan="2" HeightRequest="1" VerticalOptions="End"
+                                     Color="{AppThemeBinding Light={StaticResource LightBorder}, Dark={StaticResource DarkBorder}}"/>
+                        </Grid>
+                        <Grid Padding="16" ColumnDefinitions="*,Auto">
+                            <Label Grid.Column="0" Text="Data Source" FontSize="15"
+                                   TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                            <Label Grid.Column="1" Text="GSMArena" FontSize="15"
+                                   TextColor="{StaticResource Gray400}"/>
+                            <BoxView Grid.ColumnSpan="2" HeightRequest="1" VerticalOptions="End"
+                                     Color="{AppThemeBinding Light={StaticResource LightBorder}, Dark={StaticResource DarkBorder}}"/>
+                        </Grid>
+                        <!-- View App Guide -->
+                        <Grid Padding="16" ColumnDefinitions="Auto,*,Auto" MinimumHeightRequest="56">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ViewWalkthroughCommand}"/>
+                            </Grid.GestureRecognizers>
+                            <Label Grid.Column="0" Text="📖" FontSize="20" VerticalOptions="Center"/>
+                            <VerticalStackLayout Grid.Column="1" Margin="12,0,0,0" VerticalOptions="Center">
+                                <Label Text="App Guide" FontSize="15"
+                                       TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                                <Label Text="Replay the walkthrough tutorial" FontSize="11"
+                                       TextColor="{StaticResource Gray400}"/>
+                            </VerticalStackLayout>
+                            <Label Grid.Column="2" Text="›" FontSize="20" TextColor="{StaticResource Gray400}"/>
+                            <BoxView Grid.ColumnSpan="3" HeightRequest="1" VerticalOptions="End"
+                                     Color="{AppThemeBinding Light={StaticResource LightBorder}, Dark={StaticResource DarkBorder}}"/>
+                        </Grid>
+                        <!-- Rate App -->
+                        <Grid Padding="16" ColumnDefinitions="Auto,*,Auto" MinimumHeightRequest="56">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding RateAppCommand}"/>
+                            </Grid.GestureRecognizers>
+                            <Label Grid.Column="0" Text="⭐" FontSize="20" VerticalOptions="Center"/>
+                            <VerticalStackLayout Grid.Column="1" Margin="12,0,0,0" VerticalOptions="Center">
+                                <Label Text="Rate the App" FontSize="15"
+                                       TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                                <Label Text="Enjoying the app? Leave a review!" FontSize="11"
+                                       TextColor="{StaticResource Gray400}"/>
+                            </VerticalStackLayout>
+                            <Label Grid.Column="2" Text="›" FontSize="20" TextColor="{StaticResource Gray400}"/>
+                            <BoxView Grid.ColumnSpan="3" HeightRequest="1" VerticalOptions="End"
+                                     Color="{AppThemeBinding Light={StaticResource LightBorder}, Dark={StaticResource DarkBorder}}"/>
+                        </Grid>
+                        <!-- Privacy Policy -->
+                        <Grid Padding="16" ColumnDefinitions="Auto,*,Auto" MinimumHeightRequest="56">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenPrivacyPolicyCommand}"/>
+                            </Grid.GestureRecognizers>
+                            <Label Grid.Column="0" Text="🔏" FontSize="20" VerticalOptions="Center"/>
+                            <VerticalStackLayout Grid.Column="1" Margin="12,0,0,0" VerticalOptions="Center">
+                                <Label Text="Privacy Policy" FontSize="15"
+                                       TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                                <Label Text="How we handle your data" FontSize="11"
+                                       TextColor="{StaticResource Gray400}"/>
+                            </VerticalStackLayout>
+                            <Label Grid.Column="2" Text="›" FontSize="20" TextColor="{StaticResource Gray400}"/>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <BoxView HeightRequest="32" Color="Transparent"/>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+
+</ContentPage>

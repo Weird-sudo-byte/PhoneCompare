@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="456" height="456" viewBox="0 0 456 456" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <!-- Vibrant red gradient background -->
+        <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#FF3B30;stop-opacity:1" />
+            <stop offset="50%" style="stop-color:#E84C3D;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#C0392B;stop-opacity:1" />
+        </linearGradient>
+        <!-- Red phone gradient -->
+        <linearGradient id="redPhoneGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#D32F2F;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#B71C1C;stop-opacity:1" />
+        </linearGradient>
+        <!-- Orange phone gradient -->
+        <linearGradient id="orangePhoneGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#FF9800;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#F57C00;stop-opacity:1" />
+        </linearGradient>
+        <!-- Magnifier circle gradient -->
+        <linearGradient id="circleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#F5F5F5;stop-opacity:1" />
+        </linearGradient>
+    </defs>
+    
+    <!-- Background -->
+    <rect x="0" y="0" width="456" height="456" fill="url(#bgGradient)" rx="90" />
+    
+    <!-- Left Phone (Red) - tilted -->
+    <g transform="translate(95, 95) rotate(-15, 60, 100)">
+        <rect x="0" y="0" width="120" height="200" rx="18" fill="url(#redPhoneGradient)" />
+        <rect x="8" y="16" width="104" height="160" rx="8" fill="#8B0000" opacity="0.6" />
+        <rect x="40" y="8" width="40" height="6" rx="3" fill="#B71C1C" />
+    </g>
+    
+    <!-- Right Phone (Orange) - tilted -->
+    <g transform="translate(240, 95) rotate(15, 60, 100)">
+        <rect x="0" y="0" width="120" height="200" rx="18" fill="url(#orangePhoneGradient)" />
+        <rect x="8" y="16" width="104" height="160" rx="8" fill="#E65100" opacity="0.5" />
+        <rect x="40" y="8" width="40" height="6" rx="3" fill="#EF6C00" />
+    </g>
+    
+    <!-- Magnifying glass circle with lightning bolt -->
+    <g transform="translate(228, 200)">
+        <!-- White circle outline -->
+        <circle cx="0" cy="0" r="65" fill="none" stroke="#FFFFFF" stroke-width="10" />
+        <!-- Inner red circle -->
+        <circle cx="0" cy="0" r="55" fill="#E84C3D" />
+        <!-- Lightning bolt -->
+        <path d="M 10 -35 L -15 5 L 5 5 L -10 40 L 20 -5 L 0 -5 Z" fill="#FFFFFF" />
+    </g>
+    
+    <!-- Magnifying glass handle -->
+    <g transform="translate(228, 200)">
+        <rect x="40" y="50" width="18" height="55" rx="9" fill="#FFFFFF" transform="rotate(45, 50, 75)" />
+        <rect x="45" y="60" width="12" height="40" rx="6" fill="#D32F2F" transform="rotate(45, 50, 75)" />
+    </g>
+</svg>

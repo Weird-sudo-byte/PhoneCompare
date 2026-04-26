@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:pm="clr-namespace:PhoneCompare.PageModels"
+             xmlns:models="clr-namespace:PhoneCompare.Models"
+             x:Class="PhoneCompare.Pages.SearchPage"
+             x:DataType="pm:SearchPageModel"
+             x:Name="ThisPage"
+             Title="Search"
+             Shell.NavBarIsVisible="False">
+
+    <Grid RowDefinitions="Auto,*" BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+
+        <!-- Search Header -->
+        <Border Grid.Row="0" StrokeShape="Rectangle" Stroke="Transparent"
+                BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}"
+                Padding="16,16,16,12">
+            <Border.Shadow>
+                <Shadow Brush="{StaticResource BlackBrush}" Offset="0,2" Radius="6" Opacity="0.08"/>
+            </Border.Shadow>
+            <VerticalStackLayout Spacing="12">
+                <Label Text="Search Phones" FontSize="22" FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                <Border StrokeShape="RoundRectangle 12" Padding="4,0"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkBackground}}"
+                        Stroke="{AppThemeBinding Light={StaticResource LightBorder}, Dark={StaticResource DarkBorder}}">
+                    <Grid ColumnDefinitions="Auto,*,Auto">
+                        <Label Grid.Column="0" Text="🔍" FontSize="18" VerticalOptions="Center" Margin="12,0,8,0"/>
+                        <Entry Grid.Column="1" Placeholder="Search by phone name..."
+                               Text="{Binding SearchQuery}"
+                               ReturnCommand="{Binding SearchCommand}"
+                               PlaceholderColor="{StaticResource Gray400}"
+                               TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"
+                               BackgroundColor="Transparent" FontSize="15"
+                               VerticalOptions="Center"/>
+                        <Button Grid.Column="2" Text="✕" WidthRequest="40" HeightRequest="40"
+                                Command="{Binding ClearSearchCommand}"
+                                BackgroundColor="Transparent" TextColor="{StaticResource Gray400}"
+                                FontSize="16" CornerRadius="20" Padding="0"
+                                IsVisible="{Binding SearchQuery, Converter={toolkit:IsStringNotNullOrEmptyConverter}}"/>
+                    </Grid>
+                </Border>
+                <Button Text="Search" Command="{Binding SearchCommand}"
+                        BackgroundColor="{StaticResource Primary}" TextColor="White"
+                        FontSize="14" FontAttributes="Bold" CornerRadius="10" HeightRequest="44"/>
+                
+                <!-- Filter Section -->
+                <VerticalStackLayout Spacing="8" Margin="0,8,0,0">
+                    <!-- Filter Header with Clear Button -->
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Grid.Column="0" Text="Filters" FontSize="14" FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"
+                               VerticalOptions="Center"/>
+                        <Button Grid.Column="1" Text="✕ Clear" Command="{Binding ClearFiltersCommand}"
+                                BackgroundColor="Transparent" TextColor="{StaticResource Primary}"
+                                FontSize="13" Padding="8,4" HeightRequest="32"
+                                IsVisible="{Binding HasActiveFilters}"/>
+                    </Grid>
+                    <!-- Brand Picker -->
+                    <Grid ColumnDefinitions="Auto,*">
+                        <Label Grid.Column="0" Text="Brand:" FontSize="13" FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"
+                               VerticalOptions="Center" Margin="0,0,10,0"/>
+                        <Border Grid.Column="1" StrokeShape="RoundRectangle 8" Padding="8,0"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkBackground}}"
+                                Stroke="{AppThemeBinding Light={StaticResource LightBorder}, Dark={StaticResource DarkBorder}}">
+                            <Picker Title="All Brands" ItemsSource="{Binding Brands}" 
+                                    ItemDisplayBinding="{Binding Name}"
+                                    SelectedItem="{Binding SelectedBrand, Mode=TwoWay}"
+                                    FontSize="13"
+                                    TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"
+                                    TitleColor="{StaticResource Gray400}"
+                                    HorizontalOptions="Fill"/>
+                        </Border>
+                    </Grid>
+                    <!-- Budget Pills -->
+                    <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+                        <HorizontalStackLayout Spacing="8">
+                            <Border StrokeShape="RoundRectangle 16" Padding="12,6"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSurface}}"
+                                    Stroke="{AppThemeBinding Light={StaticResource LightBorder}, Dark={StaticResource DarkBorder}}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding FilterByBudgetCommand}" CommandParameter="0-15000"/>
+                                </Border.GestureRecognizers>
+                                <Label Text="₱15K↓" FontSize="12" FontAttributes="Bold"
+                                       TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                            </Border>
+                            <Border StrokeShape="RoundRectangle 16" Padding="12,6"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSurface}}"
+                                    Stroke="{AppThemeBinding Light={StaticResource LightBorder}, Dark={StaticResource DarkBorder}}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding FilterByBudgetCommand}" CommandParameter="15000-30000"/>
+                                </Border.GestureRecognizers>
+                                <Label Text="₱15-30K" FontSize="12" FontAttributes="Bold"
+                                       TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                            </Border>
+                            <Border StrokeShape="RoundRectangle 16" Padding="12,6"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSurface}}"
+                                    Stroke="{AppThemeBinding Light={StaticResource LightBorder}, Dark={StaticResource DarkBorder}}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding FilterByBudgetCommand}" CommandParameter="30000-50000"/>
+                                </Border.GestureRecognizers>
+                                <Label Text="₱30-50K" FontSize="12" FontAttributes="Bold"
+                                       TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                            </Border>
+                            <Border StrokeShape="RoundRectangle 16" Padding="12,6"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSurface}}"
+                                    Stroke="{AppThemeBinding Light={StaticResource LightBorder}, Dark={StaticResource DarkBorder}}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding FilterByBudgetCommand}" CommandParameter="50000-80000"/>
+                                </Border.GestureRecognizers>
+                                <Label Text="₱50-80K" FontSize="12" FontAttributes="Bold"
+                                       TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                            </Border>
+                            <Border StrokeShape="RoundRectangle 16" Padding="12,6"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSurface}}"
+                                    Stroke="{AppThemeBinding Light={StaticResource LightBorder}, Dark={StaticResource DarkBorder}}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding FilterByBudgetCommand}" CommandParameter="80000-999999"/>
+                                </Border.GestureRecognizers>
+                                <Label Text="₱80K↑" FontSize="12" FontAttributes="Bold"
+                                       TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                            </Border>
+                        </HorizontalStackLayout>
+                    </ScrollView>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- Results -->
+        <Grid Grid.Row="1" BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkBackground}}">
+            
+            <!-- Loading -->
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+                               Color="{StaticResource Primary}" HorizontalOptions="Center" VerticalOptions="Center"
+                               WidthRequest="48" HeightRequest="48"/>
+
+            <!-- Recent Searches -->
+            <VerticalStackLayout Padding="16,12" Spacing="10" IsVisible="{Binding HasRecentSearches}"
+                                 BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+                <Label Text="Recent Searches" FontSize="14" FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                <FlexLayout Wrap="Wrap" Direction="Row" JustifyContent="Start" AlignItems="Start"
+                            BindableLayout.ItemsSource="{Binding RecentSearches}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="x:String">
+                            <Border StrokeShape="RoundRectangle 16" Padding="12,6" Margin="0,0,8,8"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}"
+                                    Stroke="{AppThemeBinding Light={StaticResource LightBorder}, Dark={StaticResource DarkBorder}}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer 
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type pm:SearchPageModel}}, Path=SearchFromRecentCommand}"
+                                        CommandParameter="{Binding .}"/>
+                                </Border.GestureRecognizers>
+                                <HorizontalStackLayout Spacing="6">
+                                    <Label Text="🕐" FontSize="12"/>
+                                    <Label Text="{Binding .}" FontSize="13"
+                                           TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                                </HorizontalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </FlexLayout>
+            </VerticalStackLayout>
+
+            <!-- Empty state - not searched yet -->
+            <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Padding="40" Spacing="12"
+                                 IsVisible="{Binding HasSearched, Converter={toolkit:InvertedBoolConverter}}">
+                <Label Text="🔍" FontSize="56" HorizontalOptions="Center" IsVisible="{Binding HasRecentSearches, Converter={toolkit:InvertedBoolConverter}}"/>
+                <Label Text="Find your phone" FontSize="18" FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"
+                       HorizontalOptions="Center" IsVisible="{Binding HasRecentSearches, Converter={toolkit:InvertedBoolConverter}}"/>
+                <Label Text="Enter a phone name above to search" FontSize="13"
+                       TextColor="{StaticResource Gray400}" HorizontalOptions="Center" IsVisible="{Binding HasRecentSearches, Converter={toolkit:InvertedBoolConverter}}"/>
+                <Button Text="Browse All Phones →" Command="{Binding BrowsePhonesCommand}"
+                        BackgroundColor="{StaticResource Primary}" TextColor="White"
+                        CornerRadius="12" HeightRequest="48" Margin="0,8,0,0"
+                        IsVisible="{Binding HasRecentSearches, Converter={toolkit:InvertedBoolConverter}}"/>
+            </VerticalStackLayout>
+
+            <!-- No results -->
+            <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Padding="40" Spacing="12"
+                                 IsVisible="{Binding NoResults}">
+                <Label Text="😕" FontSize="56" HorizontalOptions="Center"/>
+                <Label Text="No phones found" FontSize="18" FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"
+                       HorizontalOptions="Center"/>
+                <Label Text="Try a different search term" FontSize="13"
+                       TextColor="{StaticResource Gray400}" HorizontalOptions="Center"/>
+                <Button Text="Browse All Phones →" Command="{Binding BrowsePhonesCommand}"
+                        BackgroundColor="{StaticResource Primary}" TextColor="White"
+                        CornerRadius="12" HeightRequest="48" Margin="0,8,0,0"/>
+            </VerticalStackLayout>
+
+            <!-- Results grid -->
+            <CollectionView ItemsSource="{Binding Results}" SelectionMode="None"
+                            ItemsLayout="VerticalGrid, 2"
+                            IsVisible="{Binding HasResults}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Phone">
+                        <Border StrokeShape="RoundRectangle 12" Margin="6" Padding="0"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}"
+                                Stroke="{AppThemeBinding Light={StaticResource LightBorder}, Dark={StaticResource DarkBorder}}">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type pm:SearchPageModel}}, Path=ViewPhoneCommand}"
+                                    CommandParameter="{Binding .}"/>
+                            </Border.GestureRecognizers>
+                            <Grid RowDefinitions="120,Auto,Auto,Auto" Padding="8">
+                                <Image Grid.Row="0" Source="{Binding ImageUrl}" Aspect="AspectFit"
+                                       HeightRequest="110" HorizontalOptions="Center"/>
+                                <Label Grid.Row="1" Text="{Binding Name}" FontSize="13" FontAttributes="Bold"
+                                       TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"
+                                       HorizontalOptions="Center" HorizontalTextAlignment="Center"
+                                       MaxLines="2" LineBreakMode="TailTruncation" Margin="0,6,0,2"/>
+                                <Label Grid.Row="2" Text="{Binding BrandName}" FontSize="11"
+                                       TextColor="{StaticResource Gray400}"
+                                       HorizontalOptions="Center" Margin="0,0,0,6"/>
+                                <Button Grid.Row="3" Text="+ Compare" FontSize="11" HeightRequest="32"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type pm:SearchPageModel}}, Path=ToggleCompareCommand}"
+                                        CommandParameter="{Binding .}"
+                                        BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkBackground}}"
+                                        TextColor="{StaticResource Primary}"
+                                        CornerRadius="8" Padding="8,0"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+
+    </Grid>
+
+</ContentPage>

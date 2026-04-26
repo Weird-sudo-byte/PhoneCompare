@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="PhoneCompare.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:pages="clr-namespace:PhoneCompare.Pages"
+    Shell.FlyoutBehavior="Disabled"
+    Shell.TabBarBackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}"
+    Shell.TabBarForegroundColor="{StaticResource Primary}"
+    Shell.TabBarUnselectedColor="{StaticResource Gray400}"
+    Title="PhoneCompare">
+
+    <!-- Login (no tabs) — shown first to avoid flicker for returning users -->
+    <ShellContent
+        Title="Login"
+        ContentTemplate="{DataTemplate pages:LoginPage}"
+        Route="login"
+        Shell.TabBarIsVisible="False"/>
+
+    <!-- Onboarding (no tabs, shown once on first launch) -->
+    <ShellContent
+        Title="Welcome"
+        ContentTemplate="{DataTemplate pages:OnboardingPage}"
+        Route="onboarding"
+        Shell.TabBarIsVisible="False"/>
+
+    <!-- Main Tab Bar -->
+    <TabBar>
+        <Tab Title="Home" Icon="home.png">
+            <ShellContent
+                ContentTemplate="{DataTemplate pages:PhoneListPage}"
+                Route="phones"/>
+        </Tab>
+        <Tab Title="Search" Icon="search.png">
+            <ShellContent
+                ContentTemplate="{DataTemplate pages:SearchPage}"
+                Route="search"/>
+        </Tab>
+        <Tab Title="Saved" Icon="heart.png">
+            <ShellContent
+                ContentTemplate="{DataTemplate pages:FavoritesPage}"
+                Route="favorites"/>
+        </Tab>
+        <Tab Title="Account" Icon="account.png">
+            <ShellContent
+                ContentTemplate="{DataTemplate pages:AccountPage}"
+                Route="account"/>
+        </Tab>
+    </TabBar>
+
+</Shell>

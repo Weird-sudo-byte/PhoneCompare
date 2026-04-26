@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="456" height="456" viewBox="0 0 456 456" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <!-- Lightning bolt centered -->
+    <g transform="translate(228, 228)">
+        <!-- White circle outline -->
+        <circle cx="0" cy="0" r="100" fill="none" stroke="#FFFFFF" stroke-width="12" />
+        <!-- Lightning bolt -->
+        <path d="M 15 -60 L -25 10 L 8 10 L -15 70 L 35 -10 L 0 -10 Z" fill="#FFFFFF" />
+    </g>
+</svg>

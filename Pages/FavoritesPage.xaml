@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:pm="clr-namespace:PhoneCompare.PageModels"
+             xmlns:models="clr-namespace:PhoneCompare.Models"
+             x:Class="PhoneCompare.Pages.FavoritesPage"
+             x:DataType="pm:FavoritesPageModel"
+             x:Name="ThisPage"
+             Title="Saved"
+             Shell.NavBarIsVisible="False">
+
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior
+            BindingContext="{Binding Path=BindingContext, Source={x:Reference ThisPage}, x:DataType=ContentPage}"
+            EventName="Appearing" Command="{Binding AppearingCommand}"/>
+    </ContentPage.Behaviors>
+
+    <Grid RowDefinitions="Auto,*" BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+        
+        <!-- Header -->
+        <Border Grid.Row="0" StrokeShape="Rectangle" Stroke="Transparent"
+                BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+            <Border.Shadow>
+                <Shadow Brush="{StaticResource BlackBrush}" Offset="0,2" Radius="4" Opacity="0.08"/>
+            </Border.Shadow>
+            <VerticalStackLayout Padding="16,16,16,12" Spacing="4">
+                <Label Text="Saved Phones" FontSize="22" FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                <Label Text="Your favorite devices" FontSize="13" TextColor="{StaticResource Gray400}"/>
+            </VerticalStackLayout>
+        </Border>
+
+    <RefreshView Grid.Row="1" Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}"
+                 RefreshColor="{StaticResource Primary}">
+        <CollectionView ItemsSource="{Binding Items}" SelectionMode="None"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkBackground}}"
+                        ItemsLayout="VerticalGrid, 2">
+            <CollectionView.EmptyView>
+                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center"
+                                     Padding="40" Spacing="16">
+                    <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+                                       Color="{StaticResource Primary}" HorizontalOptions="Center"
+                                       WidthRequest="40" HeightRequest="40"/>
+                    <Label Text="♥" FontSize="56" HorizontalOptions="Center"
+                           TextColor="{StaticResource Gray300}"
+                           IsVisible="{Binding IsBusy, Converter={toolkit:InvertedBoolConverter}}"/>
+                    <Label Text="No favorites yet" FontSize="18" FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"
+                           HorizontalOptions="Center"
+                           IsVisible="{Binding IsBusy, Converter={toolkit:InvertedBoolConverter}}"/>
+                    <Label Text="Tap the heart icon on any phone to save it" FontSize="13"
+                           TextColor="{StaticResource Gray400}" HorizontalOptions="Center"
+                           IsVisible="{Binding IsBusy, Converter={toolkit:InvertedBoolConverter}}"/>
+                    <Button Text="Browse Phones →" Command="{Binding BrowsePhonesCommand}"
+                            BackgroundColor="{StaticResource Primary}" TextColor="White"
+                            CornerRadius="12" HeightRequest="48" Margin="0,8,0,0"
+                            IsVisible="{Binding IsBusy, Converter={toolkit:InvertedBoolConverter}}"/>
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Favorite">
+                    <Border StrokeShape="RoundRectangle 12" Margin="6" Padding="0"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}"
+                            Stroke="{AppThemeBinding Light={StaticResource LightBorder}, Dark={StaticResource DarkBorder}}">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type pm:FavoritesPageModel}}, Path=ViewPhoneCommand}"
+                                CommandParameter="{Binding .}"/>
+                        </Border.GestureRecognizers>
+                        <Grid RowDefinitions="120,Auto,Auto,Auto" Padding="8">
+                            <!-- Phone Image -->
+                            <Image Grid.Row="0" Source="{Binding PhoneImageUrl}" Aspect="AspectFit"
+                                   HeightRequest="110" HorizontalOptions="Center"/>
+                            <!-- Remove button -->
+                            <Button Grid.Row="0" Text="✕" WidthRequest="28" HeightRequest="28"
+                                    HorizontalOptions="End" VerticalOptions="Start"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type pm:FavoritesPageModel}}, Path=RemoveFavoriteCommand}"
+                                    CommandParameter="{Binding .}"
+                                    BackgroundColor="{StaticResource Danger}" TextColor="White"
+                                    FontSize="12" CornerRadius="14" Padding="0"/>
+                            <!-- Phone Name -->
+                            <Label Grid.Row="1" Text="{Binding PhoneName}" FontSize="13" FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"
+                                   HorizontalOptions="Center" HorizontalTextAlignment="Center"
+                                   MaxLines="2" LineBreakMode="TailTruncation" Margin="0,6,0,2"/>
+                            <!-- Saved date -->
+                            <Label Grid.Row="2" Text="{Binding SavedAt, StringFormat='Saved {0:MMM dd}'}" FontSize="10"
+                                   TextColor="{StaticResource Gray400}"
+                                   HorizontalOptions="Center" Margin="0,0,0,8"/>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </RefreshView>
+    </Grid>
+
+</ContentPage>

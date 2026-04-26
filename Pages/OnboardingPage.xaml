@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:pm="clr-namespace:PhoneCompare.PageModels"
+             x:Class="PhoneCompare.Pages.OnboardingPage"
+             x:DataType="pm:OnboardingPageModel"
+             Shell.NavBarIsVisible="False"
+             Shell.TabBarIsVisible="False"
+             BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+
+    <Grid RowDefinitions="Auto,*,Auto,Auto">
+
+        <!-- Skip button -->
+        <Grid Grid.Row="0" Padding="16,52,16,0" ColumnDefinitions="Auto,*,Auto">
+            <!-- Branding -->
+            <HorizontalStackLayout Grid.Column="0" Spacing="8" VerticalOptions="Center" Opacity="0.6">
+                <Image Source="logo.svg" WidthRequest="20" HeightRequest="20"/>
+                <Label Text="PhoneCompare" FontSize="13" FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"/>
+            </HorizontalStackLayout>
+            <Button Grid.Column="2" Text="Skip" Command="{Binding SkipCommand}"
+                    HorizontalOptions="End"
+                    BackgroundColor="Transparent"
+                    TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                    FontSize="14"
+                    IsVisible="{Binding IsNotLastSlide}"/>
+        </Grid>
+
+        <!-- Carousel -->
+        <CarouselView x:Name="MainCarousel"
+                      Grid.Row="1"
+                      ItemsSource="{Binding Slides}"
+                      Position="{Binding CurrentIndex}"
+                      Loop="False"
+                      IsSwipeEnabled="True">
+            <CarouselView.ItemTemplate>
+                <DataTemplate x:DataType="pm:OnboardingSlide">
+                    <VerticalStackLayout Padding="32,16" VerticalOptions="Center" Spacing="24">
+
+                        <!-- Icon circle with outer ring -->
+                        <Grid HorizontalOptions="Center"
+                              WidthRequest="168" HeightRequest="168">
+                            <!-- Outer ring -->
+                            <Border HorizontalOptions="Center" VerticalOptions="Center"
+                                    WidthRequest="168" HeightRequest="168"
+                                    StrokeShape="RoundRectangle 84"
+                                    StrokeThickness="2"
+                                    Stroke="{Binding AccentLight}"
+                                    BackgroundColor="Transparent"/>
+                            <!-- Inner filled circle -->
+                            <Border HorizontalOptions="Center" VerticalOptions="Center"
+                                    WidthRequest="136" HeightRequest="136"
+                                    StrokeShape="RoundRectangle 68"
+                                    Stroke="Transparent"
+                                    BackgroundColor="{Binding AccentLight}">
+                                <Border.Shadow>
+                                    <Shadow Brush="{Binding AccentLight}" Offset="0,4" Radius="20" Opacity="0.4"/>
+                                </Border.Shadow>
+                                <Label Text="{Binding Icon}"
+                                       FontSize="56"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"/>
+                            </Border>
+                        </Grid>
+
+                        <!-- Title -->
+                        <Label Text="{Binding Title}"
+                               FontSize="28" FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"
+                               TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"
+                               LineBreakMode="WordWrap"/>
+
+                        <!-- Description -->
+                        <Label Text="{Binding Description}"
+                               FontSize="15" LineHeight="1.5"
+                               HorizontalTextAlignment="Center"
+                               TextColor="{StaticResource Gray400}"
+                               LineBreakMode="WordWrap"
+                               Margin="8,0"/>
+
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </CarouselView.ItemTemplate>
+        </CarouselView>
+
+        <!-- Dot indicators -->
+        <IndicatorView Grid.Row="2"
+                       x:Name="SlideIndicator"
+                       HorizontalOptions="Center"
+                       IndicatorColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                       SelectedIndicatorColor="{StaticResource Primary}"
+                       IndicatorSize="8"
+                       Margin="0,8"/>
+
+        <!-- Bottom buttons -->
+        <VerticalStackLayout Grid.Row="3" Margin="24,4,24,44" Spacing="0">
+
+            <!-- First slide: full-width Next only -->
+            <Button Text="Next  →"
+                    Command="{Binding NextCommand}"
+                    BackgroundColor="{StaticResource Primary}"
+                    TextColor="White"
+                    FontSize="16" FontAttributes="Bold"
+                    CornerRadius="18" HeightRequest="56"
+                    IsVisible="{Binding IsFirstSlide}">
+                <Button.Shadow>
+                    <Shadow Brush="{StaticResource PrimaryBrush}" Offset="0,3" Radius="8" Opacity="0.30"/>
+                </Button.Shadow>
+            </Button>
+
+            <!-- Middle slides: Back + Next side by side -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12"
+                  IsVisible="{Binding IsMiddleSlide}">
+                <Border Grid.Column="0"
+                        StrokeShape="RoundRectangle 18" Stroke="{StaticResource Primary}"
+                        BackgroundColor="Transparent" HeightRequest="56">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding PreviousCommand}"/>
+                    </Border.GestureRecognizers>
+                    <Label Text="←  Back" FontSize="15" FontAttributes="Bold"
+                           TextColor="{StaticResource Primary}"
+                           HorizontalOptions="Center" VerticalOptions="Center"/>
+                </Border>
+                <Button Grid.Column="1"
+                        Text="Next  →"
+                        Command="{Binding NextCommand}"
+                        BackgroundColor="{StaticResource Primary}"
+                        TextColor="White"
+                        FontSize="16" FontAttributes="Bold"
+                        CornerRadius="18" HeightRequest="56">
+                    <Button.Shadow>
+                        <Shadow Brush="{StaticResource PrimaryBrush}" Offset="0,3" Radius="8" Opacity="0.30"/>
+                    </Button.Shadow>
+                </Button>
+            </Grid>
+
+            <!-- Last slide: Back + Get Started -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12"
+                  IsVisible="{Binding IsLastSlide}">
+                <Border Grid.Column="0"
+                        StrokeShape="RoundRectangle 18" Stroke="{StaticResource Primary}"
+                        BackgroundColor="Transparent" HeightRequest="56">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding PreviousCommand}"/>
+                    </Border.GestureRecognizers>
+                    <Label Text="←  Back" FontSize="15" FontAttributes="Bold"
+                           TextColor="{StaticResource Primary}"
+                           HorizontalOptions="Center" VerticalOptions="Center"/>
+                </Border>
+                <Button Grid.Column="1"
+                        Text="🚀  Get Started"
+                        Command="{Binding NextCommand}"
+                        BackgroundColor="{StaticResource Primary}"
+                        TextColor="White"
+                        FontSize="16" FontAttributes="Bold"
+                        CornerRadius="18" HeightRequest="56">
+                    <Button.Shadow>
+                        <Shadow Brush="{StaticResource PrimaryBrush}" Offset="0,3" Radius="8" Opacity="0.30"/>
+                    </Button.Shadow>
+                </Button>
+            </Grid>
+
+        </VerticalStackLayout>
+
+    </Grid>
+
+</ContentPage>

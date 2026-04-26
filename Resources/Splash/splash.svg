@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="456" height="456" viewBox="0 0 456 456" xmlns="http://www.w3.org/2000/svg">
+  <!-- Left Phone -->
+  <rect x="95" y="128" width="100" height="200" rx="12" fill="none" stroke="#FFFFFF" stroke-width="8"/>
+  <rect x="115" y="148" width="60" height="120" rx="4" fill="#FFFFFF" opacity="0.3"/>
+  <circle cx="145" cy="298" r="12" fill="none" stroke="#FFFFFF" stroke-width="4"/>
+  
+  <!-- Right Phone -->
+  <rect x="261" y="128" width="100" height="200" rx="12" fill="none" stroke="#FFFFFF" stroke-width="8"/>
+  <rect x="281" y="148" width="60" height="120" rx="4" fill="#FFFFFF" opacity="0.3"/>
+  <circle cx="311" cy="298" r="12" fill="none" stroke="#FFFFFF" stroke-width="4"/>
+  
+  <!-- Comparison Arrows -->
+  <path d="M205 200 L251 200" stroke="#E84C3D" stroke-width="6" stroke-linecap="round"/>
+  <path d="M240 190 L251 200 L240 210" stroke="#E84C3D" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  
+  <path d="M251 256 L205 256" stroke="#E84C3D" stroke-width="6" stroke-linecap="round"/>
+  <path d="M216 246 L205 256 L216 266" stroke="#E84C3D" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>

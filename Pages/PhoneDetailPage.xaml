@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:pm="clr-namespace:PhoneCompare.PageModels"
+             xmlns:models="clr-namespace:PhoneCompare.Models"
+             x:Class="PhoneCompare.Pages.PhoneDetailPage"
+             x:DataType="pm:PhoneDetailPageModel"
+             x:Name="ThisPage"
+             Title="{Binding PhoneName}"
+             Shell.NavBarIsVisible="True">
+
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior
+            BindingContext="{Binding Path=BindingContext, Source={x:Reference ThisPage}, x:DataType=ContentPage}"
+            EventName="Appearing" Command="{Binding AppearingCommand}"/>
+    </ContentPage.Behaviors>
+
+    <Grid RowDefinitions="Auto,*">
+        <!-- Loading Overlay -->
+        <ActivityIndicator Grid.RowSpan="2" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+                           Color="{StaticResource Primary}" HorizontalOptions="Center" VerticalOptions="Center"
+                           WidthRequest="48" HeightRequest="48"/>
+
+        <!-- Error Banner -->
+        <Border Grid.Row="0" StrokeShape="RoundRectangle 0" Stroke="Transparent" Padding="14,10"
+                BackgroundColor="{StaticResource LoserRed}"
+                IsVisible="{Binding ErrorMessage, Converter={toolkit:IsStringNotNullOrEmptyConverter}}">
+            <Label Text="{Binding ErrorMessage}" TextColor="{StaticResource LoserRedText}" FontSize="13"/>
+        </Border>
+
+    <ScrollView Grid.Row="1" IsVisible="{Binding HasPhone}">
+        <VerticalStackLayout Spacing="0">
+
+            <!-- Hero Section -->
+            <Grid HeightRequest="280">
+                <BoxView BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkBackground}}"/>
+                <Image Source="{Binding Phone.ImageUrl}" Aspect="AspectFit"
+                       HeightRequest="220" VerticalOptions="Center" HorizontalOptions="Center"/>
+                <!-- Gradient overlay at bottom -->
+                <BoxView VerticalOptions="End" HeightRequest="80">
+                    <BoxView.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="Transparent" Offset="0"/>
+                            <GradientStop Color="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}" Offset="1"/>
+                        </LinearGradientBrush>
+                    </BoxView.Background>
+                </BoxView>
+                <!-- Favorite button -->
+                <Button HorizontalOptions="End" VerticalOptions="Start" Margin="12"
+                        WidthRequest="44" HeightRequest="44" CornerRadius="22"
+                        Command="{Binding ToggleFavoriteCommand}"
+                        BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource DarkSurface}}"
+                        TextColor="{StaticResource Primary}" FontSize="20"
+                        Text="{Binding IsFavorite, Converter={toolkit:BoolToObjectConverter TrueObject='♥', FalseObject='♡'}}">
+                    <Button.Shadow>
+                        <Shadow Brush="{StaticResource BlackBrush}" Offset="0,2" Radius="6" Opacity="0.15"/>
+                    </Button.Shadow>
+                </Button>
+            </Grid>
+
+            <!-- Phone Name & Price -->
+            <VerticalStackLayout Padding="16,0,16,12" Spacing="4"
+                                 BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+                <Label Text="{Binding Phone.Name}" FontSize="22" FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                <Label Text="{Binding PhonePriceDisplay}" FontSize="20" FontAttributes="Bold"
+                       TextColor="{StaticResource Primary}"/>
+            </VerticalStackLayout>
+
+            <!-- Quick Specs Pills -->
+            <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+                <HorizontalStackLayout Padding="16,0,16,16" Spacing="10">
+                    <!-- Display -->
+                    <Border StrokeShape="RoundRectangle 20" Padding="12,8"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSurface}}"
+                            Stroke="Transparent">
+                        <HorizontalStackLayout Spacing="6">
+                            <Label Text="📱" FontSize="14"/>
+                            <Label Text="{Binding Phone.Display}" FontSize="12" FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                        </HorizontalStackLayout>
+                    </Border>
+                    <!-- Camera -->
+                    <Border StrokeShape="RoundRectangle 20" Padding="12,8"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSurface}}"
+                            Stroke="Transparent">
+                        <HorizontalStackLayout Spacing="6">
+                            <Label Text="📷" FontSize="14"/>
+                            <Label Text="{Binding Phone.MainCamera}" FontSize="12" FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                        </HorizontalStackLayout>
+                    </Border>
+                    <!-- Battery -->
+                    <Border StrokeShape="RoundRectangle 20" Padding="12,8"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSurface}}"
+                            Stroke="Transparent">
+                        <HorizontalStackLayout Spacing="6">
+                            <Label Text="🔋" FontSize="14"/>
+                            <Label Text="{Binding Phone.Battery}" FontSize="12" FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                        </HorizontalStackLayout>
+                    </Border>
+                    <!-- Storage -->
+                    <Border StrokeShape="RoundRectangle 20" Padding="12,8"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSurface}}"
+                            Stroke="Transparent">
+                        <HorizontalStackLayout Spacing="6">
+                            <Label Text="💾" FontSize="14"/>
+                            <Label Text="{Binding Phone.Ram}" FontSize="12" FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                        </HorizontalStackLayout>
+                    </Border>
+                    <!-- Chipset -->
+                    <Border StrokeShape="RoundRectangle 20" Padding="12,8"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSurface}}"
+                            Stroke="Transparent">
+                        <HorizontalStackLayout Spacing="6">
+                            <Label Text="🧠" FontSize="14"/>
+                            <Label Text="{Binding Phone.Chipset}" FontSize="12" FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                        </HorizontalStackLayout>
+                    </Border>
+                </HorizontalStackLayout>
+            </ScrollView>
+
+            <!-- Action Buttons -->
+            <Grid Padding="16,0,16,16" ColumnDefinitions="*,*" ColumnSpacing="12"
+                  BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+                <Button Grid.Column="0" Text="⚖️ Add to Compare"
+                        Command="{Binding AddToCompareCommand}"
+                        BackgroundColor="{StaticResource Primary}" TextColor="White"
+                        FontSize="13" FontAttributes="Bold" CornerRadius="12" HeightRequest="48"/>
+                <Button Grid.Column="1" Text="📤 Share"
+                        Command="{Binding ShareCommand}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSurface}}"
+                        TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"
+                        FontSize="13" FontAttributes="Bold" CornerRadius="12" HeightRequest="48"
+                        BorderColor="{AppThemeBinding Light={StaticResource LightBorder}, Dark={StaticResource DarkBorder}}"
+                        BorderWidth="1"/>
+            </Grid>
+
+            <!-- Where to Buy Section -->
+            <VerticalStackLayout Padding="16,0,16,16" Spacing="12"
+                                 BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
+                                 IsVisible="{Binding HasRetailers}">
+                <Label Text="Where to Buy" FontSize="18" FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+                    <HorizontalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding Retailers}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:RetailerPrice">
+                                <Border StrokeShape="RoundRectangle 12" WidthRequest="150" Padding="12"
+                                        BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}"
+                                        Stroke="{AppThemeBinding Light={StaticResource LightBorder}, Dark={StaticResource DarkBorder}}">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer 
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type pm:PhoneDetailPageModel}}, Path=OpenRetailerCommand}"
+                                            CommandParameter="{Binding .}"/>
+                                    </Border.GestureRecognizers>
+                                    <VerticalStackLayout Spacing="6">
+                                        <HorizontalStackLayout Spacing="6">
+                                            <Label Text="{Binding LogoEmoji}" FontSize="18"/>
+                                            <Label Text="{Binding Retailer}" FontSize="13" FontAttributes="Bold"
+                                                   TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"
+                                                   VerticalOptions="Center"/>
+                                        </HorizontalStackLayout>
+                                        <HorizontalStackLayout Spacing="4">
+                                            <Label Text="{Binding PriceDisplay}" FontSize="15" FontAttributes="Bold"
+                                                   TextColor="{StaticResource Primary}"/>
+                                            <Border StrokeShape="RoundRectangle 4" Padding="4,2"
+                                                    BackgroundColor="#4CAF50" Stroke="Transparent"
+                                                    IsVisible="{Binding IsBestPrice}">
+                                                <Label Text="BEST" FontSize="8" FontAttributes="Bold" TextColor="White"/>
+                                            </Border>
+                                        </HorizontalStackLayout>
+                                        <HorizontalStackLayout Spacing="4">
+                                            <Label Text="●" FontSize="8" TextColor="{Binding StockColor}"/>
+                                            <Label Text="{Binding StockStatus}" FontSize="10"
+                                                   TextColor="{StaticResource Gray400}"/>
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </HorizontalStackLayout>
+                </ScrollView>
+            </VerticalStackLayout>
+
+            <!-- Specifications Sections -->
+            <VerticalStackLayout Padding="12" Spacing="8"
+                                 BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkBackground}}">
+                <CollectionView ItemsSource="{Binding Phone.Specifications}" SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:SpecGroup">
+                            <Border StrokeShape="RoundRectangle 12" Stroke="Transparent" Padding="0" Margin="0,4"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+                                <VerticalStackLayout>
+                                    <!-- Section Header -->
+                                    <Border StrokeShape="RoundRectangle 12,12,0,0" Stroke="Transparent" Padding="14,10"
+                                            BackgroundColor="{StaticResource Primary}">
+                                        <Label Text="{Binding Title}" FontSize="14" FontAttributes="Bold" TextColor="White"/>
+                                    </Border>
+                                    <!-- Spec Rows -->
+                                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Specs}" Padding="0">
+                                        <BindableLayout.ItemTemplate>
+                                            <DataTemplate x:DataType="models:SpecItem">
+                                                <Grid ColumnDefinitions="120,*" Padding="14,10"
+                                                      BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+                                                    <Label Grid.Column="0" Text="{Binding Key}"
+                                                           TextColor="{StaticResource Gray500}" FontSize="12"
+                                                           VerticalOptions="Start" FontAttributes="Bold"/>
+                                                    <Label Grid.Column="1" Text="{Binding Value}"
+                                                           TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"
+                                                           FontSize="12" LineBreakMode="WordWrap"/>
+                                                    <BoxView Grid.ColumnSpan="2" HeightRequest="1" VerticalOptions="End"
+                                                             Color="{AppThemeBinding Light={StaticResource LightBorder}, Dark={StaticResource DarkBorder}}"/>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </BindableLayout.ItemTemplate>
+                                    </VerticalStackLayout>
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+
+            <!-- Similar Phones Section -->
+            <VerticalStackLayout Padding="12,16" Spacing="12"
+                                 BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
+                                 IsVisible="{Binding HasSimilarPhones}">
+                <Label Text="Similar Phones" FontSize="18" FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"
+                       Margin="4,0"/>
+                <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+                    <HorizontalStackLayout Spacing="12" BindableLayout.ItemsSource="{Binding SimilarPhones}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:Phone">
+                                <Border StrokeShape="RoundRectangle 12" WidthRequest="140" Padding="8"
+                                        BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}"
+                                        Stroke="{AppThemeBinding Light={StaticResource LightBorder}, Dark={StaticResource DarkBorder}}">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer 
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type pm:PhoneDetailPageModel}}, Path=ViewSimilarPhoneCommand}"
+                                            CommandParameter="{Binding .}"/>
+                                    </Border.GestureRecognizers>
+                                    <VerticalStackLayout Spacing="6">
+                                        <Image Source="{Binding ImageUrl}" HeightRequest="100" Aspect="AspectFit"/>
+                                        <Label Text="{Binding Name}" FontSize="11" FontAttributes="Bold"
+                                               TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"
+                                               MaxLines="2" LineBreakMode="TailTruncation" HorizontalTextAlignment="Center"/>
+                                        <Label Text="{Binding PriceDisplay}" FontSize="10"
+                                               TextColor="{StaticResource Primary}" HorizontalTextAlignment="Center"/>
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </HorizontalStackLayout>
+                </ScrollView>
+            </VerticalStackLayout>
+
+            <BoxView HeightRequest="100" Color="Transparent"/>
+        </VerticalStackLayout>
+    </ScrollView>
+    </Grid>
+
+</ContentPage>

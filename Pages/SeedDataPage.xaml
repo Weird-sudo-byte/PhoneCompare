@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:pm="clr-namespace:PhoneCompare.PageModels"
+             x:Class="PhoneCompare.Pages.SeedDataPage"
+             x:DataType="pm:SeedDataPageModel"
+             x:Name="ThisPage"
+             Title="Database Admin"
+             Shell.NavBarIsVisible="True">
+
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior
+            BindingContext="{Binding Path=BindingContext, Source={x:Reference ThisPage}, x:DataType=ContentPage}"
+            EventName="Appearing" Command="{Binding AppearingCommand}"/>
+    </ContentPage.Behaviors>
+
+    <ScrollView BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+        <VerticalStackLayout Padding="20" Spacing="16">
+
+            <!-- Header -->
+            <VerticalStackLayout Spacing="4" Margin="0,8,0,8">
+                <Label Text="Database Admin" FontSize="24" FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                <Label Text="Manage Firestore phone data" FontSize="13" TextColor="{StaticResource Gray400}"/>
+            </VerticalStackLayout>
+
+            <!-- Stats Card -->
+            <Border StrokeShape="RoundRectangle 16" Stroke="Transparent" Padding="20"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}"
+                    IsVisible="{Binding HasStats}">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Firestore Stats" FontSize="16" FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12">
+                        <!-- Brands -->
+                        <Border Grid.Column="0" StrokeShape="RoundRectangle 12" Stroke="Transparent" Padding="12"
+                                BackgroundColor="{StaticResource Primary}">
+                            <VerticalStackLayout HorizontalOptions="Center" Spacing="4">
+                                <Label Text="{Binding DbBrands}" FontSize="28" FontAttributes="Bold"
+                                       TextColor="White" HorizontalOptions="Center"/>
+                                <Label Text="Brands" FontSize="11" TextColor="White" HorizontalOptions="Center"
+                                       Opacity="0.8"/>
+                            </VerticalStackLayout>
+                        </Border>
+                        <!-- Phones -->
+                        <Border Grid.Column="1" StrokeShape="RoundRectangle 12" Stroke="Transparent" Padding="12"
+                                BackgroundColor="{StaticResource Secondary}">
+                            <VerticalStackLayout HorizontalOptions="Center" Spacing="4">
+                                <Label Text="{Binding DbPhones}" FontSize="28" FontAttributes="Bold"
+                                       TextColor="White" HorizontalOptions="Center"/>
+                                <Label Text="Phones" FontSize="11" TextColor="White" HorizontalOptions="Center"
+                                       Opacity="0.8"/>
+                            </VerticalStackLayout>
+                        </Border>
+                        <!-- Details -->
+                        <Border Grid.Column="2" StrokeShape="RoundRectangle 12" Stroke="Transparent" Padding="12"
+                                BackgroundColor="{StaticResource Success}">
+                            <VerticalStackLayout HorizontalOptions="Center" Spacing="4">
+                                <Label Text="{Binding DbDetails}" FontSize="28" FontAttributes="Bold"
+                                       TextColor="White" HorizontalOptions="Center"/>
+                                <Label Text="Details" FontSize="11" TextColor="White" HorizontalOptions="Center"
+                                       Opacity="0.8"/>
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+                    <Button Text="Refresh Stats" Command="{Binding RefreshStatsCommand}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkBackground}}"
+                            TextColor="{StaticResource Primary}" FontSize="13" CornerRadius="10" HeightRequest="40"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Seed Section -->
+            <Border StrokeShape="RoundRectangle 16" Stroke="Transparent" Padding="20"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+                <VerticalStackLayout Spacing="14">
+                    <Label Text="Seed Mock Data" FontSize="16" FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+                    <Label Text="Upload all phones from MockPhoneData into Firestore (10 brands, 54 phones, 54 details). This is idempotent — safe to run multiple times."
+                           FontSize="12" TextColor="{StaticResource Gray400}" LineBreakMode="WordWrap"/>
+
+                    <!-- Progress -->
+                    <ProgressBar Progress="{Binding Progress}" ProgressColor="{StaticResource Primary}"
+                                 HeightRequest="8" IsVisible="{Binding IsBusy}"/>
+                    <Label Text="{Binding StatusMessage}" FontSize="12"
+                           TextColor="{StaticResource Gray500}" HorizontalOptions="Center"/>
+
+                    <!-- Buttons -->
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <Button Grid.Column="0" Text="Seed Database" Command="{Binding SeedMockDataCommand}"
+                                BackgroundColor="{StaticResource Primary}" TextColor="White"
+                                FontSize="14" FontAttributes="Bold" CornerRadius="12" HeightRequest="48"
+                                IsEnabled="{Binding IsBusy, Converter={toolkit:InvertedBoolConverter}}"/>
+                        <Button Grid.Column="1" Text="Cancel" Command="{Binding CancelSeedCommand}"
+                                BackgroundColor="{StaticResource Danger}" TextColor="White"
+                                FontSize="13" CornerRadius="12" HeightRequest="48" WidthRequest="90"
+                                IsVisible="{Binding IsBusy}"/>
+                    </Grid>
+
+                    <!-- Result -->
+                    <Border StrokeShape="RoundRectangle 10" Stroke="Transparent" Padding="14"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkBackground}}"
+                            IsVisible="{Binding HasResult}">
+                        <Label Text="{Binding ResultSummary}" FontSize="13"
+                               TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"
+                               LineBreakMode="WordWrap"/>
+                    </Border>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Maintenance Section -->
+            <Border StrokeShape="RoundRectangle 16" Stroke="Transparent" Padding="20"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}">
+                <VerticalStackLayout Spacing="14">
+                    <Label Text="Maintenance" FontSize="16" FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark=White}"/>
+
+                    <Button Text="Clear Local Cache" Command="{Binding ClearCacheCommand}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkBackground}}"
+                            TextColor="{StaticResource Warning}" FontSize="13" CornerRadius="10" HeightRequest="44"
+                            BorderColor="{StaticResource Warning}" BorderWidth="1"/>
+
+                    <Label Text="Clears the on-device cache. Data will be re-fetched from Firestore on next load."
+                           FontSize="11" TextColor="{StaticResource Gray400}"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <BoxView HeightRequest="40" Color="Transparent"/>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
