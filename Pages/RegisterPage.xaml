@@ -68,6 +68,9 @@
                                    VerticalOptions="Center" FontSize="14"/>
                         </Border>
 
+                        <Label Text="Min 8 chars, with uppercase, lowercase, number &amp; special character"
+                               FontSize="11" TextColor="{StaticResource Gray400}" Margin="4,-8,0,0"/>
+
                         <!-- Confirm Password -->
                         <Border StrokeShape="RoundRectangle 12" Stroke="Transparent" Padding="14,4"
                                 BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkBackground}}"

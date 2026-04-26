@@ -138,9 +138,10 @@ public partial class ForgotPasswordPageModel : ObservableObject
             return;
         }
 
-        if (NewPassword.Length < 6)
+        var passwordError = ValidatePassword(NewPassword);
+        if (passwordError != null)
         {
-            ErrorMessage = "Password must be at least 6 characters.";
+            ErrorMessage = passwordError;
             return;
         }
 
@@ -234,4 +235,19 @@ public partial class ForgotPasswordPageModel : ObservableObject
 
     [RelayCommand]
     private Task GoBack() => Shell.Current.GoToAsync("..");
+
+    private static string? ValidatePassword(string password)
+    {
+        if (password.Length < 8)
+            return "Password must be at least 8 characters.";
+        if (!password.Any(char.IsUpper))
+            return "Password must contain at least one uppercase letter.";
+        if (!password.Any(char.IsLower))
+            return "Password must contain at least one lowercase letter.";
+        if (!password.Any(char.IsDigit))
+            return "Password must contain at least one number.";
+        if (password.All(char.IsLetterOrDigit))
+            return "Password must contain at least one special character (!@#$%^&* etc.).";
+        return null;
+    }
 }
